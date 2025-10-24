@@ -2,6 +2,13 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\KantorController;
+use App\Http\Controllers\PengaturanController;
+use App\Http\Controllers\DepartemenController;
+use App\Http\Controllers\JabatanController;
+use App\Http\Controllers\KaryawanController;
+
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,25 +28,30 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return inertia('DashboardAdmin/Index');
-    })->name('dashboard');
+    Route::get('/dashboard', [KantorController::class, 'index'])->name('dashboard');
+    Route::put('/kantor/update/{id}', [KantorController::class, 'update'])->name('kantor.update');
 
-    Route::get('/perusahaan-pelaksana', function () {
-        return inertia('DashboardAdmin/DataDasar/PerusahaanPelaksana');
-    })->name('perusahaan-pelaksana');
+    Route::post('/pengaturan/update', [PengaturanController::class, 'update'])->name('pengaturan.update');
 
-    Route::get('/kepegawaian/departemen', function () {
-        return inertia('DashboardAdmin/DataDasar/Kepegawaian/Departemen');
-    })->name('departemen');
 
-    Route::get('/kepegawaian/jabatan', function () {
-        return inertia('DashboardAdmin/DataDasar/Kepegawaian/Jabatan');
-    })->name('jabatan');
+    Route::get('/upz', function () {
+        return inertia('DashboardAdmin/DataDasar/UPZ');
+    })->name('upz');
 
-    Route::get('/kepegawaian/data-karyawan', function () {
-        return inertia('DashboardAdmin/DataDasar/Kepegawaian/DataKaryawan');
-    })->name('data-karyawan');
+    Route::get('/kepegawaian/departemen', [DepartemenController::class, 'index'])->name('departemen.index');
+    Route::post('/kepegawaian/departemen', [DepartemenController::class, 'store'])->name('departemen.store');
+    Route::put('/kepegawaian/departemen/{id}', [DepartemenController::class, 'update'])->name('departemen.update');
+    Route::delete('/kepegawaian/departemen/{id}', [DepartemenController::class, 'destroy'])->name('departemen.destroy');
+
+    Route::get('/kepegawaian/jabatan', [JabatanController::class, 'index'])->name('jabatan.index');
+    Route::post('/kepegawaian/jabatan', [JabatanController::class, 'store'])->name('jabatan.store');
+    Route::put('/kepegawaian/jabatan/{id}', [JabatanController::class, 'update'])->name('jabatan.update');
+    Route::delete('/kepegawaian/jabatan/{id}', [JabatanController::class, 'destroy'])->name('jabatan.destroy');
+
+    Route::get('/kepegawaian/data-karyawan', [KaryawanController::class, 'index'])->name('karyawan.index');
+    Route::post('/kepegawaian/data-karyawan', [KaryawanController::class, 'store'])->name('karyawan.store');
+    Route::put('/kepegawaian/data-karyawan/{id}', [KaryawanController::class, 'update'])->name('karyawan.update');
+    Route::delete('/kepegawaian/data-karyawan/{id}', [KaryawanController::class, 'destroy'])->name('karyawan.destroy');
 
     Route::get('/kepegawaian/pemberian-akun', function () {
         return inertia('DashboardAdmin/DataDasar/Kepegawaian/PemberianAkun');

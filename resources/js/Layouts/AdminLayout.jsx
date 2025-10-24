@@ -1,20 +1,7 @@
 import { useState } from "react";
 import { Link, usePage } from "@inertiajs/react";
 import ApplicationLogo from "@/Components/ApplicationLogo";
-import {
-    ChevronLeft,
-    ChevronRight,
-    LogOut,
-    User,
-    Home,
-    Database,
-    Building2,
-    Users2,
-    ChevronDown,
-    ClipboardList,
-    Menu,
-    X,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, LogOut, User, Home, Database, Building2, Users2, ChevronDown, ClipboardList, Menu, X, } from "lucide-react";
 
 export default function AdminLayout({ header, children }) {
     const { auth } = usePage().props;
@@ -29,6 +16,23 @@ export default function AdminLayout({ header, children }) {
     // State untuk menu bertingkat
     const [openDataDasar, setOpenDataDasar] = useState(false);
     const [openKepegawaian, setOpenKepegawaian] = useState(false);
+
+
+    // === Aktif Route Checker ===
+    const isKepegawaianActive =
+        route().current("departemen.index") ||
+        route().current("jabatan.index") ||
+        route().current("karyawan.index") ||
+        route().current("pemberian-akun");
+
+    const isDataDasarActive =
+        route().current("upz") ||
+        isKepegawaianActive ||
+        route().current("departemen.index") ||
+        route().current("jabatan.index") ||
+        route().current("karyawan.index") ||
+        route().current("pemberian-akun");
+
 
     return (
         <div className="min-h-screen flex bg-gray-100">
@@ -101,9 +105,8 @@ export default function AdminLayout({ header, children }) {
                     <div>
                         <button
                             onClick={() => setOpenDataDasar(!openDataDasar)}
-                            className={`w-full flex items-center justify-between p-2 rounded-md text-gray-700 hover:bg-gray-100 transition-all ${
-                                openDataDasar ? "bg-gray-100 font-semibold" : ""
-                            }`}
+                            className={`w-full flex items-center justify-between p-2 rounded-md text-gray-700 transition-all 
+                                ${openDataDasar || isDataDasarActive ? "bg-gray-100 font-semibold" : "hover:bg-gray-100"}`}
                         >
                             <div className="flex items-center gap-3">
                                 <Database className="h-5 w-5" />
@@ -118,28 +121,32 @@ export default function AdminLayout({ header, children }) {
                             )}
                         </button>
 
-                        {/* === Submenu Data Dasar === */}
+                        {/* ===== Submenu Data Dasar ===== */}
                         <div
                             className={`pl-11 space-y-1 overflow-hidden transition-all duration-500 ${
-                                openDataDasar && isExpanded
-                                    ? "max-h-96 opacity-100 mt-1"
-                                    : "max-h-0 opacity-0"
+                                openDataDasar && isExpanded ? "max-h-96 opacity-100 mt-1" : "max-h-0 opacity-0"
                             }`}
                         >
-                            {/* Perusahaan Pelaksana */}
+                            {/* UPZ */}
                             <Link
-                                href="/perusahaan-pelaksana"
-                                className="flex items-center gap-2 py-1.5 text-sm text-gray-600 hover:text-amber-600"
+                                href={route("upz")}
+                                className={`flex items-center gap-2 py-1.5 text-sm text-gray-600 hover:text-amber-600 
+                                    ${route().current("upz") ? "bg-gray-200 font-semibold text-amber-700 rounded-md px-2" : ""}`}
                             >
                                 <Building2 className="h-4 w-4" />
-                                <span>Perusahaan Pelaksana</span>
+                                <span>UPZ</span>
                             </Link>
 
-                            {/* Kepegawaian (submenu lagi) */}
+                            {/* === Kepegawaian (submenu lagi) === */}
                             <div>
                                 <button
                                     onClick={() => setOpenKepegawaian(!openKepegawaian)}
-                                    className="w-full flex items-center justify-between py-1.5 text-sm text-gray-600 hover:text-amber-600 transition-all"
+                                    className={`w-full flex items-center justify-between py-1.5 text-sm transition-all
+                                        ${
+                                            isKepegawaianActive
+                                                ? "text-amber-700 font-semibold"
+                                                : "text-gray-600 hover:text-amber-600"
+                                        }`}
                                 >
                                     <div className="flex items-center gap-2">
                                         <Users2 className="h-4 w-4" />
@@ -154,38 +161,55 @@ export default function AdminLayout({ header, children }) {
                                     )}
                                 </button>
 
-                                {/* Submenu Kepegawaian */}
+                                {/* ===== Submenu Kepegawaian ===== */}
                                 <div
                                     className={`pl-6 mt-1 space-y-1 overflow-hidden transition-all duration-500 ${
-                                        openKepegawaian
-                                            ? "max-h-40 opacity-100"
-                                            : "max-h-0 opacity-0"
+                                        openKepegawaian ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
                                     }`}
                                 >
                                     <Link
-                                        href="/kepegawaian/departemen"
-                                        className="flex items-center gap-2 text-xs text-gray-600 hover:text-amber-600"
+                                        href={route("departemen.index")}
+                                        className={`flex items-center gap-2 text-xs hover:text-amber-600 ${
+                                            route().current("departemen.index")
+                                                ? "text-amber-700 font-semibold"
+                                                : "text-gray-600"
+                                        }`}
                                     >
                                         <ClipboardList className="h-3.5 w-3.5" />
                                         <span>Departemen</span>
                                     </Link>
+
                                     <Link
-                                        href="/kepegawaian/jabatan"
-                                        className="flex items-center gap-2 text-xs text-gray-600 hover:text-amber-600"
+                                        href={route("jabatan.index")}
+                                        className={`flex items-center gap-2 text-xs hover:text-amber-600 ${
+                                            route().current("jabatan.index")
+                                                ? "text-amber-700 font-semibold"
+                                                : "text-gray-600"
+                                        }`}
                                     >
                                         <ClipboardList className="h-3.5 w-3.5" />
                                         <span>Jabatan</span>
                                     </Link>
+
                                     <Link
-                                        href="/kepegawaian/data-karyawan"
-                                        className="flex items-center gap-2 text-xs text-gray-600 hover:text-amber-600"
+                                        href={route("karyawan.index")}
+                                        className={`flex items-center gap-2 text-xs hover:text-amber-600 ${
+                                            route().current("karyawan.index")
+                                                ? "text-amber-700 font-semibold"
+                                                : "text-gray-600"
+                                        }`}
                                     >
                                         <ClipboardList className="h-3.5 w-3.5" />
                                         <span>Data Karyawan</span>
                                     </Link>
+
                                     <Link
-                                        href="/kepegawaian/pemberian-akun"
-                                        className="flex items-center gap-2 text-xs text-gray-600 hover:text-amber-600"
+                                        href={route("pemberian-akun")}
+                                        className={`flex items-center gap-2 text-xs hover:text-amber-600 ${
+                                            route().current("pemberian-akun")
+                                                ? "text-amber-700 font-semibold"
+                                                : "text-gray-600"
+                                        }`}
                                     >
                                         <ClipboardList className="h-3.5 w-3.5" />
                                         <span>Pemberian Akun</span>
@@ -250,7 +274,7 @@ export default function AdminLayout({ header, children }) {
                         </button>
 
                         {showDropdown && (
-                            <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow">
+                            <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-50">
                                 <Link
                                     href={route("profile.edit")}
                                     className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
