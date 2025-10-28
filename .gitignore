@@ -22,3 +22,8 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Ignore all dummy index.php files
+**/index.php
+!public/index.php
+

@@ -14,7 +14,14 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+            \App\Http\Middleware\KantorAccessMiddleware::class,
         ]);
+
+        $middleware->alias([
+            'kantor' => \App\Http\Middleware\KantorAccessMiddleware::class,
+            'check.session' => \App\Http\Middleware\CheckSession::class,
+        ]);
+
 
         //
     })

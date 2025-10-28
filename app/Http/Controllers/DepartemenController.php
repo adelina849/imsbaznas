@@ -11,7 +11,14 @@ class DepartemenController extends Controller
 {
     public function index()
     {
-        $departemen = Departemen::orderBy('hirarki', 'asc')->get();
+        $user = Auth::user();
+
+        $departemen = Departemen::query()
+            ->when($user->kode_kantor !== 'ADMNPST', function ($q) use ($user) {
+                $q->where('kode_kantor', $user->kode_kantor);
+            })
+            ->orderBy('hirarki', 'asc')
+            ->get();
 
         return Inertia::render('DashboardAdmin/DataDasar/Kepegawaian/Departemen', [
             'dataDepartemen' => $departemen,
@@ -25,15 +32,11 @@ class DepartemenController extends Controller
             'nama_dept' => 'required',
             'ket_dept' => 'nullable|string',
             'hirarki' => 'nullable|integer',
-            'kode_kantor' => 'nullable|string|max:10',
         ]);
 
         $validated['tgl_ins'] = now();
         $validated['user_ins'] = Auth::user()->name ?? 'system';
-        $validated['tgl_updt'] = null;
-        $validated['user_updt'] = null;
-        $validated['kode_kantor'] = Auth::user()->kode_kantor ?? 'TK1';
-
+        $validated['kode_kantor'] = Auth::user()->kode_kantor;
 
         Departemen::create($validated);
 
@@ -42,18 +45,23 @@ class DepartemenController extends Controller
 
     public function update(Request $request, $id)
     {
-        $dept = Departemen::findOrFail($id);
+        $user = Auth::user();
+
+        $dept = Departemen::query()
+            ->when($user->kode_kantor !== 'ADMNPST', function ($q) use ($user) {
+                $q->where('kode_kantor', $user->kode_kantor);
+            })
+            ->findOrFail($id);
 
         $validated = $request->validate([
             'kode_dept' => 'required',
             'nama_dept' => 'required',
             'ket_dept' => 'nullable|string',
             'hirarki' => 'nullable|integer',
-            'kode_kantor' => 'nullable|string|max:10',
         ]);
 
         $validated['tgl_updt'] = now();
-        $validated['user_updt'] = Auth::user()->name ?? 'system';
+        $validated['user_updt'] = $user->name ?? 'system';
 
         $dept->update($validated);
 
@@ -62,7 +70,14 @@ class DepartemenController extends Controller
 
     public function destroy($id)
     {
-        Departemen::findOrFail($id)->delete();
+        $user = Auth::user();
+
+        Departemen::query()
+            ->when($user->kode_kantor !== 'ADMNPST', function ($q) use ($user) {
+                $q->where('kode_kantor', $user->kode_kantor);
+            })
+            ->findOrFail($id)
+            ->delete();
 
         return redirect()->back()->with('success', 'Departemen berhasil dihapus.');
     }

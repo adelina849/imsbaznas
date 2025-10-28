@@ -2,11 +2,12 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\KantorController;
+use App\Http\Controllers\UPZController;
 use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\DepartemenController;
 use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\KaryawanController;
+use App\Http\Controllers\PemberianAkunController;
 
 
 use Illuminate\Support\Facades\Route;
@@ -23,20 +24,16 @@ Route::middleware('guest')->group(function () {
 Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->middleware('auth')->name('logout');
 
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-});
-
-Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [KantorController::class, 'index'])->name('dashboard');
-    Route::put('/kantor/update/{id}', [KantorController::class, 'update'])->name('kantor.update');
-
+Route::middleware(['auth','verified', 'check.session', 'kantor'])->group(function () {
+    Route::get('/dashboard', [UPZController::class, 'index'])->name('dashboard');
     Route::post('/pengaturan/update', [PengaturanController::class, 'update'])->name('pengaturan.update');
 
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 
-    Route::get('/upz', function () {
-        return inertia('DashboardAdmin/DataDasar/UPZ');
-    })->name('upz');
+    Route::get('/upz', [UPZController::class, 'indexx'])->name('upz.indexx');
+    Route::post('/upz', [UPZController::class, 'store'])->name('upz.store');
+    Route::put('/upz/{id}', [UPZController::class, 'update'])->name('upz.update');
+    Route::delete('/upz/{id}', [UPZController::class, 'destroy'])->name('upz.destroy');
 
     Route::get('/kepegawaian/departemen', [DepartemenController::class, 'index'])->name('departemen.index');
     Route::post('/kepegawaian/departemen', [DepartemenController::class, 'store'])->name('departemen.store');
@@ -53,9 +50,10 @@ Route::middleware('auth')->group(function () {
     Route::put('/kepegawaian/data-karyawan/{id}', [KaryawanController::class, 'update'])->name('karyawan.update');
     Route::delete('/kepegawaian/data-karyawan/{id}', [KaryawanController::class, 'destroy'])->name('karyawan.destroy');
 
-    Route::get('/kepegawaian/pemberian-akun', function () {
-        return inertia('DashboardAdmin/DataDasar/Kepegawaian/PemberianAkun');
-    })->name('pemberian-akun');
+    Route::get('/kepegawaian/pemberian-akun', [PemberianAkunController::class, 'index'])->name('pemberian-akun.index');
+    Route::post('/kepegawaian/pemberian-akun', [PemberianAkunController::class, 'store'])->name('pemberian-akun.store');
+    Route::put('/pemberian-akun/{id}', [PemberianAkunController::class, 'update'])->name('pemberian-akun.update');
+    
 });
 
 

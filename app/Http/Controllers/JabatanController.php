@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Jabatan;
@@ -13,9 +12,17 @@ class JabatanController extends Controller
 {
     public function index()
     {
+        $user = Auth::user();
+
         return Inertia::render('DashboardAdmin/DataDasar/Kepegawaian/Jabatan', [
-            'dataJabatan' => Jabatan::orderBy('id_jabatan', 'asc')->get(),
-            'dataDepartemen' => Departemen::orderBy('nama_dept')->get(),
+            'dataJabatan' => Jabatan::query()
+                ->when($user->kode_kantor !== 'ADMNPST', fn($q) => $q->where('kode_kantor', $user->kode_kantor))
+                ->orderBy('id_jabatan', 'asc')
+                ->get(),
+            'dataDepartemen' => Departemen::query()
+                ->when($user->kode_kantor !== 'ADMNPST', fn($q) => $q->where('kode_kantor', $user->kode_kantor))
+                ->orderBy('nama_dept')
+                ->get(),
         ]);
     }
 
@@ -31,7 +38,7 @@ class JabatanController extends Controller
 
         $validated['tgl_insert'] = now();
         $validated['user'] = Auth::user()->name ?? 'System';
-        $validated['kode_kantor'] = Auth::user()->kode_kantor ?? 'TK1';
+        $validated['kode_kantor'] = Auth::user()->kode_kantor;
     
         Jabatan::create($validated);
 
@@ -40,7 +47,11 @@ class JabatanController extends Controller
 
     public function update(Request $request, $id)
     {
-        $jabatan = Jabatan::findOrFail($id);
+        $user = Auth::user();
+
+        $jabatan = Jabatan::query()
+            ->when($user->kode_kantor !== 'ADMNPST', fn($q) => $q->where('kode_kantor', $user->kode_kantor))
+            ->findOrFail($id);
 
         $validated = $request->validate([
             'id_dept' => 'required',
@@ -50,7 +61,7 @@ class JabatanController extends Controller
         ]);
 
         $validated['tgl_update'] = now();
-        $validated['user_updt'] = Auth::user()->name ?? 'System';
+        $validated['user_updt'] = $user->name ?? 'System';
 
         $jabatan->update($validated);
 
@@ -59,7 +70,13 @@ class JabatanController extends Controller
 
     public function destroy($id)
     {
-        Jabatan::findOrFail($id)->delete();
+        $user = Auth::user();
+
+        Jabatan::query()
+            ->when($user->kode_kantor !== 'ADMNPST', fn($q) => $q->where('kode_kantor', $user->kode_kantor))
+            ->findOrFail($id)
+            ->delete();
+
         return redirect()->back()->with('success', 'Jabatan berhasil dihapus.');
     }
 }

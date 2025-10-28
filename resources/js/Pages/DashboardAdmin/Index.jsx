@@ -11,35 +11,6 @@ export default function Dashboard({ kantor, pengaturan }) {
     const [showLogs, setShowLogs] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
 
-    // === FORM DATA ===
-    const { data, setData, put, processing, errors, reset } = useForm({
-        id_kantor: kantor?.id_kantor || "",
-        kode_kantor: kantor?.kode_kantor || "",
-        nama_kantor: kantor?.nama_kantor || "",
-        pemilik: kantor?.pemilik || "",
-        kota: kantor?.kota || "",
-        alamat: kantor?.alamat || "",
-        tlp: kantor?.tlp || "",
-        sejarah: kantor?.sejarah || "",
-        ket_kantor: kantor?.ket_kantor || "",
-    });
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        put(route("kantor.update", data.id_kantor), {
-            onSuccess: () => {
-                setShowEditModal(false);
-                reset();
-            setAlert({ type: "success", message: "Perubahan berhasil disimpan." });
-            setFieldErrors({});
-            },
-            onError: () => {
-                setAlert({ type: "error", message: "Gagal menyimpan perubahan, periksa kembali input." });
-            },
-        });
-    };
-
-
     // === FORM UPDATE PENGATURAN ===
     const [listPengaturan, setListPengaturan] = useState(pengaturan || []);
     const {} = useForm({
@@ -186,47 +157,6 @@ export default function Dashboard({ kantor, pengaturan }) {
                     </div>
                 </div>
 
-                {/* === PROFIL PERUSAHAAN === */}
-                <div className="bg-white shadow rounded-lg p-5 sm:p-6">
-                    <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-5 sm:mb-6">
-                        Profil Perusahaan
-                    </h2>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                        {/* Card Ubah Data */}
-                        <div className="bg-gradient-to-br from-amber-500 to-amber-600 text-white rounded-xl p-5 sm:p-6 shadow-lg flex flex-col justify-between hover:scale-[1.02] transition-transform">
-                            <div>
-                                <h3 className="text-base sm:text-lg font-semibold mb-2">Ubah Data Kantor</h3>
-                                <p className="text-xs sm:text-sm opacity-90">
-                                    Perbarui informasi kantor seperti nama, alamat, dan kontak agar tetap akurat.
-                                </p>
-                            </div>
-                            <button
-                                onClick={() => setShowEditModal(true)}
-                                className="mt-4 inline-flex items-center justify-center gap-2 bg-white/20 hover:bg-white/30 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all"
-                            >
-                                <Edit3 className="w-4 h-4" />
-                                Ubah Data
-                            </button>
-                        </div>
-
-                        {/* Card Data Kantor */}
-                        <div className="border rounded-lg p-5 sm:p-6 bg-gray-50 text-gray-700 shadow-sm">
-                            <h3 className="text-sm sm:text-base font-semibold text-gray-800 mb-3">
-                                Data Kantor Saat Ini
-                            </h3>
-                            <div className="space-y-1 text-xs sm:text-sm break-words">
-                                <p><b>Kode:</b> {kantor.kode_kantor}</p>
-                                <p><b>Nama Kantor:</b> {kantor.nama_kantor}</p>
-                                <p><b>Pemilik:</b> {kantor.pemilik}</p>
-                                <p><b>Kota:</b> {kantor.kota}</p>
-                                <p><b>Telepon:</b> {kantor.tlp}</p>
-                                <p><b>Alamat:</b> {kantor.alamat}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 {/* === PENGATURAN APLIKASI === */}
                 <div className="bg-white shadow rounded-lg p-5 sm:p-6 mt-6">
                     <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-4">
@@ -316,83 +246,6 @@ export default function Dashboard({ kantor, pengaturan }) {
                     </div>
                 </div>
             </div>
-
-            {/* === MODAL EDIT PROFIL === */}
-            {showEditModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-                    <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-lg sm:max-w-3xl max-h-[90vh] overflow-y-auto border border-gray-200 animate-fadeIn">
-                        <div className="flex justify-between items-center px-5 sm:px-6 py-3 sm:py-4 border-b border-gray-200 sticky top-0 bg-white z-10">
-                            <h3 className="text-base sm:text-lg font-semibold text-gray-800">Edit Data Kantor</h3>
-                            <button
-                                onClick={() => setShowEditModal(false)}
-                                className="text-gray-500 hover:text-gray-800 transition-colors"
-                            >
-                                <X className="w-5 h-5" />
-                            </button>
-                        </div>
-
-                        <form onSubmit={handleSubmit} className="px-5 sm:px-6 py-5 space-y-3 sm:space-y-4">
-                            <div>
-                                <label className="text-sm font-medium text-gray-700">Kode Kantor</label>
-                                <input
-                                    type="text"
-                                    value={data.kode_kantor}
-                                    disabled
-                                    className="w-full mt-1 border-gray-300 rounded-lg shadow-sm focus:ring-amber-500 focus:border-amber-500 bg-gray-100 text-gray-600 cursor-not-allowed"
-                                />
-                            </div>
-
-                            {[
-                                { name: "nama_kantor", label: "Nama Kantor" },
-                                { name: "pemilik", label: "Pemilik/Penanggung Jawab" },
-                                { name: "tlp", label: "Telepon" },
-                                { name: "kota", label: "Kota" },
-                            ].map((item, i) => (
-                                <div key={i}>
-                                    <label className="text-sm font-medium text-gray-700">{item.label}</label>
-                                    <input
-                                        type="text"
-                                        value={data[item.name]}
-                                        onChange={(e) => setData(item.name, e.target.value)}
-                                        className="w-full mt-1 border-gray-300 rounded-lg shadow-sm focus:ring-amber-500 focus:border-amber-500"
-                                    />
-                                </div>
-                            ))}
-
-                            {["alamat", "sejarah", "ket_kantor"].map((name, i) => (
-                                <div key={i}>
-                                    <label className="text-sm font-medium text-gray-700 capitalize">
-                                        {name.replace("_", " ")}
-                                    </label>
-                                    <textarea
-                                        rows="3"
-                                        value={data[name]}
-                                        onChange={(e) => setData(name, e.target.value)}
-                                        className="w-full mt-1 border-gray-300 rounded-lg shadow-sm focus:ring-amber-500 focus:border-amber-500 resize-y"
-                                    ></textarea>
-                                </div>
-                            ))}
-
-                            <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 sticky bottom-0 bg-white">
-                                <button
-                                    type="button"
-                                    onClick={() => setShowEditModal(false)}
-                                    className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium transition-all"
-                                >
-                                    Batal
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={processing}
-                                    className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium shadow transition-all"
-                                >
-                                    {processing ? "Menyimpan..." : "Simpan Perubahan"}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
         </AdminLayout>
     );
 }

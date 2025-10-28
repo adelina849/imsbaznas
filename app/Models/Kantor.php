@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class Kantor extends Model
 {
-    protected $table = 'tb_kantor';
+    protected $table = 'tb_kantor_new';
     protected $primaryKey = 'id_kantor';
     public $incrementing = false; // karena id_kantor bukan auto increment
     public $timestamps = false;
@@ -22,6 +22,9 @@ class Kantor extends Model
         'tlp',
         'sejarah',
         'ket_kantor',
+        'tgl_ins',
+        'tgl_updt',
+        'user_updt',
     ];
 
     // === Membuat ID otomatis sebelum insert ===
@@ -47,7 +50,7 @@ class Kantor extends Model
         $prefix = 'ON' . strtoupper($kode_kantor);
 
         // Cari urutan terakhir untuk hari ini
-        $lastId = DB::table('tb_kantor')
+        $lastId = DB::table('tb_kantor_new')
             ->where('id_kantor', 'like', "{$prefix}{$tahun}{$bulan}{$hari}%")
             ->orderBy('id_kantor', 'desc')
             ->value('id_kantor');

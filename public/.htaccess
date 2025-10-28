@@ -1,4 +1,7 @@
 <IfModule mod_rewrite.c>
+    # 🔒 Nonaktifkan directory listing
+    Options -Indexes
+
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>

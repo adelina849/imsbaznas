@@ -17,6 +17,7 @@ export default function Jabatan() {
     // === FORM TAMBAH ===
     const { data, setData, post, reset, errors } = useForm({
         id_dept: "",
+        nama_dept: "",
         kode_jabatan: "",
         nama_jabatan: "",
         ket_jabatan: "",
@@ -40,11 +41,11 @@ export default function Jabatan() {
         e.preventDefault();
         const newErrors = {};
 
+        if (!data.id_dept) newErrors.id_dept = "Departemen harus dipilih.";
         if (!data.kode_jabatan) newErrors.kode_jabatan = "Kode Jabatan wajib diisi.";
         if (!data.nama_jabatan) newErrors.nama_jabatan = "Nama Jabatan wajib diisi.";
         if (!data.ket_jabatan) newErrors.ket_jabatan = "Keterangan wajib diisi.";
         if (!data.hirarki) newErrors.hirarki = "Hirarki wajib diisi.";
-        if (!data.kode_kantor) newErrors.hirarki = "Kode Kantor wajib diisi.";
 
         setFieldErrors(newErrors);
         if (Object.keys(newErrors).length > 0) return;
@@ -118,16 +119,12 @@ export default function Jabatan() {
         <AdminLayout header="Jabatan">
             <Head title="Jabatan" />
 
-            {alert.message && (
-                <div
-                    className={`mb-4 px-4 py-3 rounded-lg text-sm font-medium shadow transition-all duration-300 ${
-                        alert.type === "success"
-                            ? "bg-green-100 text-green-700 border border-green-300"
-                            : "bg-red-100 text-red-700 border border-red-300"
-                    }`}
-                >
-                    {alert.message}
-                </div>
+            {alert.type === "success" && alert.message && (
+            <div
+                className="mb-4 p-3 rounded-md text-sm font-medium bg-green-100 text-green-700 border border-green-300"
+            >
+                {alert.message}
+            </div>
             )}
 
             <div className="bg-white shadow-md rounded-xl p-4 transition-all duration-300">
@@ -163,7 +160,7 @@ export default function Jabatan() {
                     <table className="min-w-full text-sm text-left">
                         <thead className="bg-gray-50 text-gray-700">
                             <tr>
-                            {["No", "Kode Jabatan", "Nama Jabatan", "Keterangan", "Hirarki", "Kode Kantor", "Aksi"].map((h) => (
+                            {["No", "Kode Jabatan", "Nama Jabatan", "Keterangan", "Hirarki", "Kode UPZ", "Aksi"].map((h) => (
                                 <th key={h} className="px-4 py-3 font-semibold text-xs uppercase text-center">{h}</th>
                             ))}
                             </tr>
@@ -272,6 +269,15 @@ export default function Jabatan() {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
                     <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-lg sm:max-w-3xl overflow-y-auto">
                         
+                        {/* === ALERT ERROR (khusus di atas modal) === */}
+                        {alert.type === "error" && alert.message && (
+                            <div
+                            className="mb-4 p-3 rounded-md text-sm font-medium bg-red-100 text-red-700 border border-red-300"
+                            >
+                            {alert.message}
+                            </div>
+                        )}
+
                         {/* === Header === */}
                         <div className="flex justify-between items-center px-6 py-4 border-b">
                             <h3 className="text-lg font-semibold text-gray-800">
@@ -295,31 +301,54 @@ export default function Jabatan() {
                                 className="px-6 py-5 space-y-4"
                             >
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                               
+                                {/* Departemen */}
                                 <div>
                                     <label className="text-sm font-medium text-gray-700">Departemen</label>
                                     <select
                                         value={showAddModal ? data.id_dept : editForm.data.id_dept}
-                                        onChange={(e) =>
-                                            showAddModal
-                                                ? setData("id_dept", e.target.value)
-                                                : editForm.setData("id_dept", e.target.value)
-                                        }
-                                        className="w-full mt-1 border-gray-300 rounded-lg shadow-sm focus:ring-amber-500 focus:border-amber-500"
-                                        required
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+
+                                            // Update state form
+                                            if (showAddModal) setData("id_dept", value);
+                                            else editForm.setData("id_dept", value);
+
+                                            // === VALIDASI ===
+                                            if (value.trim() === "") {
+                                                setFieldErrors((prev) => ({
+                                                ...prev,
+                                                id_dept: "Departemen harus dipilih.",
+                                                }));
+                                            } else {
+                                                setFieldErrors((prev) => {
+                                                const updated = { ...prev };
+                                                delete updated.id_dept;
+                                                return updated;
+                                                });
+                                            }
+                                        }}
+                                        className={`w-full mt-1 border-gray-300 rounded-lg shadow-sm focus:ring-amber-500 focus:border-amber-500 ${
+                                        fieldErrors.id_dept ? "border-red-500 bg-red-50" : ""
+                                        }`}
                                         disabled={showEditModal}
                                     >
                                         <option value="">-- Pilih Departemen --</option>
                                         {dataDepartemen.map((d) => (
-                                            <option key={d.id_dept} value={d.id_dept}>
-                                                {d.nama_dept}
-                                            </option>
+                                        <option key={d.id_dept} value={d.id_dept}>
+                                            {d.nama_dept}
+                                        </option>
                                         ))}
                                     </select>
+
+                                    {fieldErrors.id_dept && (
+                                        <p className="text-xs text-red-600 mt-1">{fieldErrors.id_dept}</p>
+                                    )}
                                 </div>
+
+                                {/* Kode Jabatan */}
                                 <div>
-                                    <label className="text-sm font-medium text-gray-700">
-                                        Kode Jabatan
-                                    </label>
+                                    <label className="text-sm font-medium text-gray-700">Kode Jabatan</label>
                                     <input
                                         type="text"
                                         value={showAddModal ? data.kode_jabatan : editForm.data.kode_jabatan}
@@ -349,6 +378,7 @@ export default function Jabatan() {
                                 </div>
                             </div>
 
+                            {/* Nama Jabatan */}
                             <div>
                                 <label className="text-sm font-medium text-gray-700">
                                     Nama Jabatan
@@ -380,6 +410,7 @@ export default function Jabatan() {
                                     )}
                             </div>
 
+                            {/* Keterangan */}
                             <div>
                                 <label className="text-sm font-medium text-gray-700">Keterangan</label>
                                 <textarea
@@ -409,6 +440,7 @@ export default function Jabatan() {
                                     )}
                             </div>
 
+                            {/* Hirarki */}
                             <div>
                                 <label className="text-sm font-medium text-gray-700">Hirarki</label>
                                 <input

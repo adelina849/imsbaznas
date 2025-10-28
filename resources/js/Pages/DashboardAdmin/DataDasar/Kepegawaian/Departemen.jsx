@@ -117,16 +117,12 @@ export default function Departemen() {
         <AdminLayout header="Departemen">
             <Head title="Departemen" />
 
-            {alert.message && (
-                <div
-                    className={`mb-4 px-4 py-3 rounded-lg text-sm font-medium shadow transition-all duration-300 ${
-                        alert.type === "success"
-                            ? "bg-green-100 text-green-700 border border-green-300"
-                            : "bg-red-100 text-red-700 border border-red-300"
-                    }`}
-                >
-                    {alert.message}
-                </div>
+            {alert.type === "success" && alert.message && (
+            <div
+                className="mb-4 p-3 rounded-md text-sm font-medium bg-green-100 text-green-700 border border-green-300"
+            >
+                {alert.message}
+            </div>
             )}
 
             <div className="bg-white shadow-md rounded-xl p-4 transition-all duration-300">
@@ -162,7 +158,7 @@ export default function Departemen() {
                     <table className="min-w-full text-sm text-left">
                         <thead className="bg-gray-50 text-gray-700">
                             <tr>
-                                {["No", "Kode", "Nama", "Keterangan", "Hirarki", "Kode Kantor", "Aksi"].map((h) => (
+                                {["No", "Kode", "Nama", "Keterangan", "Hirarki", "Kode UPZ", "Aksi"].map((h) => (
                                     <th key={h} className="px-4 py-3 font-semibold text-xs uppercase text-center">{h}</th>
                                 ))}
                             </tr>
@@ -270,8 +266,17 @@ export default function Departemen() {
             {/* === MODAL TAMBAH & EDIT DEPARTEMEN === */}
             {(showAddModal || showEditModal) && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-                    <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-lg sm:max-w-3xl max-h-[90vh] overflow-y-auto border border-gray-200 transition-all duration-300 transform scale-100 animate-fadeIn">
+                    <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-lg sm:max-w-3xl max-h-[90vh] overflow-y-auto border border-gray-200 transition-all duration-300 transform scale-100 animate-fadeIn">  
                         
+                        {/* === ALERT ERROR (khusus di atas modal) === */}
+                        {alert.type === "error" && alert.message && (
+                            <div
+                            className="mb-4 p-3 rounded-md text-sm font-medium bg-red-100 text-red-700 border border-red-300"
+                            >
+                            {alert.message}
+                            </div>
+                        )}
+
                         {/* === Header === */}
                         <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 sticky top-0 bg-white z-10">
                             <h3 className="text-lg font-semibold text-gray-800">

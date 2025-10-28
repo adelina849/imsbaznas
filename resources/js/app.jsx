@@ -23,3 +23,10 @@ createInertiaApp({
         color: '#4B5563',
     },
 });
+
+window.addEventListener("storage", (event) => {
+  if (event.key === "logout-event") {
+    window.location.href = "/login";
+  }
+});
+

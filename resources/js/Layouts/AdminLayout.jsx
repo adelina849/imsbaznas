@@ -26,12 +26,12 @@ export default function AdminLayout({ header, children }) {
         route().current("pemberian-akun");
 
     const isDataDasarActive =
-        route().current("upz") ||
+        route().current("upz.indexx") ||
         isKepegawaianActive ||
         route().current("departemen.index") ||
         route().current("jabatan.index") ||
         route().current("karyawan.index") ||
-        route().current("pemberian-akun");
+        route().current("pemberian-akun.index");
 
 
     return (
@@ -122,31 +122,26 @@ export default function AdminLayout({ header, children }) {
                         </button>
 
                         {/* ===== Submenu Data Dasar ===== */}
-                        <div
-                            className={`pl-11 space-y-1 overflow-hidden transition-all duration-500 ${
-                                openDataDasar && isExpanded ? "max-h-96 opacity-100 mt-1" : "max-h-0 opacity-0"
-                            }`}
-                        >
+                        <div className={`space-y-1 overflow-hidden transition-all duration-500 ${openDataDasar && isExpanded ? "max-h-96 opacity-100 mt-1" : "max-h-0 opacity-0"}`}>
+                            
                             {/* UPZ */}
                             <Link
-                                href={route("upz")}
-                                className={`flex items-center gap-2 py-1.5 text-sm text-gray-600 hover:text-amber-600 
-                                    ${route().current("upz") ? "bg-gray-200 font-semibold text-amber-700 rounded-md px-2" : ""}`}
+                                href={route("upz.indexx")}
+                                className={`flex items-center gap-2 pl-6 py-1.5 text-sm hover:text-amber-600 ${
+                                    route().current("upz.indexx") ? "text-amber-700 font-semibold rounded-md px-2" : "text-gray-600"
+                                }`}
                             >
                                 <Building2 className="h-4 w-4" />
                                 <span>UPZ</span>
                             </Link>
 
-                            {/* === Kepegawaian (submenu lagi) === */}
+                            {/* Kepegawaian */}
                             <div>
                                 <button
                                     onClick={() => setOpenKepegawaian(!openKepegawaian)}
-                                    className={`w-full flex items-center justify-between py-1.5 text-sm transition-all
-                                        ${
-                                            isKepegawaianActive
-                                                ? "text-amber-700 font-semibold"
-                                                : "text-gray-600 hover:text-amber-600"
-                                        }`}
+                                    className={`w-full flex items-center justify-between pl-6 py-1.5 text-sm transition-all ${
+                                        isKepegawaianActive ? "text-amber-700 font-semibold" : "text-gray-600 hover:text-amber-600"
+                                    }`}
                                 >
                                     <div className="flex items-center gap-2">
                                         <Users2 className="h-4 w-4" />
@@ -154,19 +149,15 @@ export default function AdminLayout({ header, children }) {
                                     </div>
                                     {isExpanded && (
                                         <ChevronDown
-                                            className={`h-3 w-3 text-gray-500 transition-transform duration-300 ${
-                                                openKepegawaian ? "rotate-180" : ""
-                                            }`}
+                                            className={`h-3 w-3 text-gray-500 transition-transform duration-300 ${openKepegawaian ? "rotate-180" : ""}`}
                                         />
                                     )}
                                 </button>
 
                                 {/* ===== Submenu Kepegawaian ===== */}
-                                <div
-                                    className={`pl-6 mt-1 space-y-1 overflow-hidden transition-all duration-500 ${
-                                        openKepegawaian ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
-                                    }`}
-                                >
+                                <div className={`pl-6 mt-1 space-y-1 overflow-hidden transition-all duration-500 ${
+                                    openKepegawaian ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+                                    }`}>
                                     <Link
                                         href={route("departemen.index")}
                                         className={`flex items-center gap-2 text-xs hover:text-amber-600 ${
@@ -204,9 +195,9 @@ export default function AdminLayout({ header, children }) {
                                     </Link>
 
                                     <Link
-                                        href={route("pemberian-akun")}
+                                        href={route("pemberian-akun.index")}
                                         className={`flex items-center gap-2 text-xs hover:text-amber-600 ${
-                                            route().current("pemberian-akun")
+                                            route().current("pemberian-akun.index")
                                                 ? "text-amber-700 font-semibold"
                                                 : "text-gray-600"
                                         }`}
@@ -219,19 +210,6 @@ export default function AdminLayout({ header, children }) {
                         </div>
                     </div>
                 </nav>
-
-                {/* === LOGOUT === */}
-                <div className="p-3 border-t">
-                    <form method="POST" action={route("logout")}>
-                        <button
-                            type="submit"
-                            className="w-full flex items-center gap-3 p-2 rounded-md text-red-600 hover:bg-red-50"
-                        >
-                            <LogOut className="h-5 w-5" />
-                            {isExpanded && <span>Logout</span>}
-                        </button>
-                    </form>
-                </div>
             </aside>
 
             {/* === MAIN AREA === */}
