@@ -2,110 +2,54 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Kantor;
-use App\Models\Pengaturan;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class UPZController extends Controller
 {
-    public function index()
+    public function baznas()
     {
-        $pengaturan = Pengaturan::orderBy('id_pengaturan')->get();
-
-        return Inertia::render('DashboardAdmin/Index', [
-            'pengaturan' => $pengaturan,
-        ]);
+        return Inertia::render('UPZ/Baznas');
     }
 
-    public function indexx()
+    public function kkma()
     {
-        $user = Auth::user();
-        $kantor = Kantor::query()
-            ->when($user->kode_kantor !== 'ADMNPST', function ($q) use ($user) {
-                $q->where('kode_kantor', $user->kode_kantor);
-            })
-            ->orderBy('id_kantor', 'asc')
-            ->get();
-
-        return Inertia::render('DashboardAdmin/DataDasar/UPZ', [
-            'dataUpz' => $kantor,
-            'user' => Auth::user(), // <-- kirim user login
-        ]);
+        return Inertia::render('UPZ/KKMA');
     }
 
-    public function store(Request $request)
+
+    public function kkmts()
     {
-
-        //dd($request->all());
-
-        $validated = $request->validate([
-            'kode_kantor' => 'required|unique:tb_kantor_new,kode_kantor',
-            'nama_kantor' => 'required',
-            'pemilik' => 'required|string',
-            'kota' => 'required|string',
-            'alamat' => 'required|string',
-            'tlp' => 'required|string|max:35',
-            'sejarah' => 'required|string',
-            'ket_kantor' => 'required|string',
-        ]);
-
-        $validated['tgl_ins'] = now();
-        $validated['user_updt'] = Auth::user()->name ?? 'system';
-        $validated['tgl_updt'] = null;
-
-        Kantor::create($validated);
-
-        return redirect()->back()->with('success', 'UPZ berhasil ditambahkan.');
+        return Inertia::render(component: 'UPZ/KKMTS');
     }
 
-    public function update(Request $request, $id)
+    public function kkmi()
     {
-        $user = Auth::user();
-
-        $dept = Kantor::query()
-            ->when($user->kode_kantor !== 'ADMNPST', function ($q) use ($user) {
-                $q->where('kode_kantor', $user->kode_kantor);
-            })
-            ->findOrFail($id);
-
-        $validated = $request->validate([
-            'kode_kantor' => 'required|unique:tb_kantor_new,kode_kantor,' . $id . ',id_kantor',
-            'nama_kantor' => 'required',
-            'pemilik' => 'required|string',
-            'kota' => 'required|string',
-            'alamat' => 'required|string',
-            'tlp' => 'required|string|max:35',
-            'sejarah' => 'required|string',
-            'ket_kantor' => 'required|string',
-        ]);
-
-        $validated['tgl_updt'] = now();
-        $validated['user_updt'] = $user->name ?? 'system';
-
-        $dept->update($validated);
-
-        return redirect()->back()->with('success', 'UPZ berhasil diperbarui.');
+        return Inertia::render(component: 'UPZ/KKMI');
     }
 
-    public function destroy($id)
+    public function kkra()
     {
-        $user = Auth::user();
+        return Inertia::render('UPZ/KKRA');
+    }
 
-        $kantor = Kantor::query()
-            ->when($user->kode_kantor !== 'ADMNPST', function ($q) use ($user) {
-                $q->where('kode_kantor', $user->kode_kantor);
-            })
-            ->findOrFail($id);
+    public function upz_cijangkar()
+    {
+        return Inertia::render('UPZ/UD_Cijangkar');
+    }
 
-        // Cegah user menghapus kantornya sendiri
-        if ($kantor->kode_kantor === $user->kode_kantor) {
-            return redirect()->back()->with('error', 'Anda tidak bisa menghapus kantor Anda sendiri.');
-        }
+    public function upz_sukaresmi()
+    {
+        return Inertia::render('UPZ/UD_Sukaresmi');
+    }
 
-        $kantor->delete();
+    public function upz_cisaat()
+    {
+        return Inertia::render('UPZ/UD_Cisaat');
+    }
 
-        return redirect()->back()->with('success', 'UPZ berhasil dihapus.');
+    public function upz_gunung_guruh()
+    {
+        return Inertia::render('UPZ/UD_GunungGuruh');
     }
 }

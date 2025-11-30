@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UPZController;
 use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\DepartemenController;
@@ -25,15 +26,15 @@ Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->middl
 
 
 Route::middleware(['auth','verified', 'check.session', 'kantor'])->group(function () {
-    Route::get('/dashboard', [UPZController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
     Route::post('/pengaturan/update', [PengaturanController::class, 'update'])->name('pengaturan.update');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 
-    Route::get('/upz', [UPZController::class, 'indexx'])->name('upz.indexx');
-    Route::post('/upz', [UPZController::class, 'store'])->name('upz.store');
-    Route::put('/upz/{id}', [UPZController::class, 'update'])->name('upz.update');
-    Route::delete('/upz/{id}', [UPZController::class, 'destroy'])->name('upz.destroy');
+    Route::get('/home', [HomeController::class, 'indexx'])->name('home.indexx');
+    Route::post('/home', [HomeController::class, 'store'])->name('home.store');
+    Route::put('/home/{id}', [HomeController::class, 'update'])->name('home.update');
+    Route::delete('/home/{id}', [HomeController::class, 'destroy'])->name('home.destroy');
 
     Route::get('/kepegawaian/departemen', [DepartemenController::class, 'index'])->name('departemen.index');
     Route::post('/kepegawaian/departemen', [DepartemenController::class, 'store'])->name('departemen.store');
@@ -54,6 +55,16 @@ Route::middleware(['auth','verified', 'check.session', 'kantor'])->group(functio
     Route::post('/kepegawaian/pemberian-akun', [PemberianAkunController::class, 'store'])->name('pemberian-akun.store');
     Route::put('/pemberian-akun/{id}', [PemberianAkunController::class, 'update'])->name('pemberian-akun.update');
     
+
+    Route::get('/baznas', [UPZController::class, 'baznas'])->name('baznas');
+    Route::get('/kkma', [UPZController::class, 'kkma'])->name('kkma');
+    Route::get('/kkmts', [UPZController::class, 'kkmts'])->name('kkmts');
+    Route::get('/kkmi', [UPZController::class, 'kkmi'])->name('kkmi');
+    Route::get('/kkra', [UPZController::class, 'kkra'])->name('kkra');
+    Route::get('/upz-cijangkar', [UPZController::class, 'upz_cijangkar'])->name('upz_cijangkar');
+    Route::get('/upz-sukaresmi', [UPZController::class, 'upz_sukaresmi'])->name('upz_sukaresmi');
+    Route::get('/upz-cisaat', [UPZController::class, 'upz_cisaat'])->name('upz_cisaat');
+    Route::get('/upz-gunung-guruh', [UPZController::class, 'upz_gunung_guruh'])->name('upz_gunung_guruh');
 });
 
 
